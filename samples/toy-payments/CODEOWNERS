@@ -1,0 +1,6 @@
+# Fixture owners for the CodeGraph spike (not a live GitHub team map).
+* @payments-platform
+payments/authorize.py @risk-owners
+payments/ledger.py @ledger-owners
+payments/notify.py @notifications
+payments/settle.py @payments-platform
