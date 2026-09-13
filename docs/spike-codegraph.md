@@ -12,8 +12,8 @@ Use a real checkout if you have one (Ripple / RLUSD services). Otherwise use [`s
 
 | Question | How to probe | Pass if |
 | --- | --- | --- |
-| CALLS | `codegraph callers post_ledger_entry` / `codegraph callees settle_payment` | Callers and callees match source |
-| Impact | `codegraph impact post_ledger_entry` | Blast radius includes `settle_payment` (and notify if linked) |
+| CALLS | `codegraph callers -p <repo> post_ledger_entry` / `codegraph callees -p <repo> settle_payment` | Callers and callees match source |
+| Impact | `codegraph impact -p <repo> post_ledger_entry` | Blast radius includes `settle_payment` (and notify if linked) |
 | Structure | `codegraph files` / `codegraph query settle` | Modules and symbols are listed |
 | Ownership | Open `CODEOWNERS` next to the graph | Agent can combine path owners with impact (CodeGraph does not replace CODEOWNERS) |
 | MCP | Agent lists `codegraph_explore` after restart | Stdio server starts; no extra process to babysit |
@@ -74,17 +74,20 @@ Stdio command is always:
 codegraph serve --mcp
 ```
 
-Restart the agent after changing MCP config. You do not run `serve` yourself; the client spawns it.
+Optional flags: `--path <repo>` (otherwise the client’s workspace root) and `--no-watch` on slow filesystems. Restart the agent after changing MCP config. You do not run `serve` yourself; the client spawns it. The CLI `codegraph explore` command returns the same payload as the `codegraph_explore` MCP tool, so you can score CALLS / impact without an IDE.
 
 Default MCP surface is one tool: **`codegraph_explore`** (source + call paths + blast radius). Narrower tools (`codegraph_callers`, `codegraph_impact`, …) exist but are unlisted unless you set e.g. `CODEGRAPH_MCP_TOOLS=explore,node,search,callers,callees,impact,files,status`. CLI equivalents work without MCP:
 
 ```bash
+# From inside the indexed repo, or pass --path / -p
 codegraph query settle_payment --json
 codegraph callers post_ledger_entry --json
 codegraph callees settle_payment --json
 codegraph impact post_ledger_entry --depth 3 --json
 codegraph explore "how does settle_payment reach notify_settlement"
 ```
+
+Query commands default to cwd’s `.codegraph/`. The eval script always passes `--path` so you can run it from this repo root.
 
 ## Eval script
 

@@ -52,6 +52,7 @@ You need a machine with CodeGraph on `PATH` (or `npx`). This repo does not vendo
 # 1. Install the CLI (pick one)
 npm i -g @colbymchenry/codegraph
 # or: curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+# If npm -g hits EACCES, use a user prefix or skip this — the eval script falls back to npx.
 
 # 2. Wire MCP into your agent(s) once
 codegraph install --target=claude,cursor --yes

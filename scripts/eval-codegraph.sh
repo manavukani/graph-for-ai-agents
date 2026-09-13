@@ -56,7 +56,7 @@ echo
 
 if [[ ! -d "${target}/.codegraph" ]]; then
   echo "==> init (create .codegraph/ + index)"
-  run_cg init "${target}"
+  run_cg init --yes "${target}"
 else
   echo "==> index (refresh existing .codegraph/)"
   run_cg index "${target}"
@@ -68,27 +68,27 @@ run_cg status "${target}" || true
 
 echo
 echo "==> structure: files"
-run_cg files "${target}/payments" --max-depth 2 || run_cg files "${target}" || true
+run_cg files --path "${target}" --filter payments --max-depth 2 || true
 
 echo
 echo "==> structure: query settle_payment"
-run_cg query settle_payment --limit 10 --json || true
+run_cg query --path "${target}" settle_payment --limit 10 --json || true
 
 echo
 echo "==> CALLS: callers of post_ledger_entry"
-run_cg callers post_ledger_entry --json || true
+run_cg callers --path "${target}" post_ledger_entry --json || true
 
 echo
 echo "==> CALLS: callees of settle_payment"
-run_cg callees settle_payment --json || true
+run_cg callees --path "${target}" settle_payment --json || true
 
 echo
 echo "==> impact: post_ledger_entry"
-run_cg impact post_ledger_entry --depth 3 --json || true
+run_cg impact --path "${target}" post_ledger_entry --depth 3 --json || true
 
 echo
 echo "==> explore (same shape as MCP tool codegraph_explore)"
-run_cg explore "how does settle_payment reach notify_settlement" || true
+run_cg explore --path "${target}" "how does settle_payment reach notify_settlement" || true
 
 echo
 echo "==> ownership (file-based; not a graph node type)"
